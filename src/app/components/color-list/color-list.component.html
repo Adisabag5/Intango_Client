@@ -1,0 +1,18 @@
+
+
+
+<div class="container">
+    <div *ngIf="isLoading" class="overlay">
+        <div class="center">
+            <mat-progress-spinner *ngIf="isLoading"></mat-progress-spinner> 
+        </div>
+    </div>
+    <div class="total_votes">
+        <h2>Total votes: {{ total_votes }}</h2>
+    </div>
+    <mat-grid-list cols="{{ num_of_cols }}" rowHeight="400px">
+        <mat-grid-tile class="color_container" *ngFor="let color of color_list" (click)="vote(color.id)">
+            <app-color class="color" [color] = " color " [max_votes] = " max_votes "></app-color>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>
