@@ -16,9 +16,11 @@ export class HttpServiceService {
     return this.http.get(environment.endpoint+'/color-list' )
   }
 
-  vote(id: number){
+ vote(id: number){
     let body = {id : id}
     return this.http.put<any>(environment.endpoint+'/vote/'+id, body );
 
   }
+
+ 
 }

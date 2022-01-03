@@ -19,6 +19,8 @@ export class ColorListComponent implements OnInit {
 
   isLoading: boolean = false;
 
+  counter = 0;
+
   constructor(
     private httpService: HttpServiceService,
     private snackbar: MatSnackBar,
@@ -27,13 +29,11 @@ export class ColorListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getData();
-
+    setInterval( () => {this.getData()}, 30000);
+    this.checkInnerWidth();
   }
 
   getData(){
-    // this.color_list = Data.list;
-    // this.total_votes = Data.total_votes;
-    // this.max_votes = Data.highest_vote_count;
 
     this.httpService.getColorListData().subscribe(
       (rest: any) => {
@@ -55,6 +55,10 @@ export class ColorListComponent implements OnInit {
   @HostListener('window:resize', ['$event'])
     onResize(event: any) {
       console.log(this.num_of_cols)
+      this.checkInnerWidth();
+    }
+
+    checkInnerWidth(){
       this.innerWidth = window.innerWidth;
       if(this.innerWidth > 1500){
         this.num_of_cols = 4;
@@ -67,22 +71,31 @@ export class ColorListComponent implements OnInit {
       }
     }
 
-    vote(color_id: number){
+    async vote(color_id: number){
       console.log(color_id)
       this.isLoading = true;
-      this.httpService.vote(color_id).subscribe( 
-        rest => {console.log(rest)
-          this.snackbar.open('Thank for your vote, we got it!', 'Dismiss',{duration: 5000} );
-
-        },
-        error => {
-          console.error(error)
-          this.snackbar.open('There was a problem, try again', 'Dismiss',{duration: 5000} );
-        },
-        () => {
-          this.isLoading = false;
-          this.getData();
-        });
+      // this.httpService.vote(color_id).then(
+      //   rest => {console.log(rest)
+      //         this.snackbar.open('Thank for your vote, we got it!', 'Dismiss',{duration: 5000} );
+      //         this.isLoading = false;
+      //       }
+      // )
+      await new Promise(() => {
+        this.httpService.vote(color_id).subscribe( 
+          rest => {console.log(rest)
+            this.snackbar.open('Thank for your vote, we got it!', 'Dismiss',{duration: 5000} );
+          },
+          error => {
+            console.error(error)
+            this.snackbar.open('There was a problem, try again', 'Dismiss',{duration: 5000} );
+          },
+          () => {
+            this.isLoading = false;
+            this.getData();
+            console.log(this.counter)
+          });
+      })
+      
     }
 
 }
